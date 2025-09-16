@@ -3,371 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>腾讯云风格文件管理平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        :root {
-            --tc-blue: #006EFF;
-            --tc-dark-blue: #0052CC;
-            --tc-light-bg: #F5F7FA;
-            --tc-border: #DDE0E6;
-            --tc-text: #252B3A;
-            --tc-text-secondary: #5A6277;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-        }
-        body {
-            background-color: var(--tc-light-bg);
-            color: var(--tc-text);
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-        header {
-            background: linear-gradient(135deg, var(--tc-blue) 0%, var(--tc-dark-blue) 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .upload-section {
-            padding: 2rem;
-            border-bottom: 1px solid var(--tc-border);
-        }
-        .upload-area {
-            border: 2px dashed var(--tc-border);
-            border-radius: 6px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: #fafafa;
-        }
-        .upload-area:hover {
-            border-color: var(--tc-blue);
-            background-color: #f0f7ff;
-        }
-        .upload-area i {
-            font-size: 3rem;
-            color: var(--tc-blue);
-            margin-bottom: 1rem;
-        }
-        #fileInput {
-            display: none;
-        }
-        .upload-btn {
-            display: inline-block;
-            background: var(--tc-blue);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 1rem;
-            border: none;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
-        .upload-btn:hover {
-            background: var(--tc-dark-blue);
-        }
-        .file-list-section {
-            padding: 2rem;
-        }
-        .file-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        .refresh-btn {
-            background: none;
-            border: 1px solid var(--tc-border);
-            color: var(--tc-text-secondary);
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .refresh-btn:hover {
-            border-color: var(--tc-blue);
-            color: var(--tc-blue);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--tc-border);
-        }
-        th {
-            background-color: var(--tc-light-bg);
-            font-weight: 600;
-        }
-        tr:hover {
-            background-color: #fafafa;
-        }
-        .action-btn {
-            color: var(--tc-blue);
-            text-decoration: none;
-            margin-right: 1rem;
-            cursor: pointer;
-        }
-        .action-btn:hover {
-            text-decoration: underline;
-        }
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: var(--tc-text-secondary);
-        }
-        .error-message {
-            color: #ff4d4f;
-            text-align: center;
-            padding: 1rem;
-        }
-    </style>
+    <title>腾讯云文件管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="https://cloud.tencent.com/favicon.ico">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-cloud"></i> 腾讯云文件管理平台</h1>
-            <p>基于 EdgeOne 与对象存储 COS 构建</p>
-        </header>
-
-        <section class="upload-section">
-            <div class="upload-area" id="dropArea">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>将文件拖放到此处，或点击选择文件</p>
-                <input type="file" id="fileInput">
-                <div class="upload-btn" onclick="document.getElementById('fileInput').click()">选择文件</div>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="https://cloud.tencent.com/favicon.ico" alt="腾讯云" class="logo">
+                <span class="brand-text">腾讯云文件管理</span>
             </div>
-        </section>
+            <nav class="nav-menu">
+                <a href="#upload" class="nav-link">文件上传</a>
+                <a href="#list" class="nav-link">文件列表</a>
+                <a href="https://cloud.tencent.com" class="nav-link" target="_blank">返回腾讯云</a>
+            </nav>
+        </div>
+    </header>
 
-        <section class="file-list-section">
-            <div class="file-list-header">
-                <h2>文件列表</h2>
-                <button class="refresh-btn" onclick="loadFileList()"><i class="fas fa-sync-alt"></i> 刷新</button>
-            </div>
-            <div id="fileListContainer">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> 加载中...
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 文件上传区域 -->
+            <section id="upload" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">文件上传</h2>
+                        <p class="card-subtitle">支持多种文件格式上传至腾讯云COS</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-icon">📁</div>
+                            <p class="upload-text">点击选择文件或拖拽文件到此处</p>
+                            <p class="upload-hint">支持图片、文档、视频等多种格式</p>
+                            <input type="file" id="fileInput" class="file-input" multiple>
+                        </div>
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <span class="progress-text" id="progressText">0%</span>
+                        </div>
+                        <button class="btn btn-primary" id="uploadBtn" disabled>开始上传</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <!-- 文件列表区域 -->
+            <section id="list" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">文件列表</h2>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary" id="refreshBtn">刷新列表</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="file-list" id="fileList">
+                            <div class="loading" id="loading">
+                                <div class="spinner"></div>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 消息提示 -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <span class="toast-message" id="toastMessage"></span>
+            <button class="toast-close" id="toastClose">×</button>
+        </div>
     </div>
 
-    <script>
-        const API_BASE = '/api'; // 边缘函数API路由
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFileList();
-            setupDragAndDrop();
-        });
-
-        // 设置拖放功能
-        function setupDragAndDrop() {
-            const dropArea = document.getElementById('dropArea');
-            const fileInput = document.getElementById('fileInput');
-
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
-            });
-
-            function highlight() {
-                dropArea.style.borderColor = '#006EFF';
-                dropArea.style.backgroundColor = '#f0f7ff';
-            }
-
-            function unhighlight() {
-                dropArea.style.borderColor = '';
-                dropArea.style.backgroundColor = '';
-            }
-
-            dropArea.addEventListener('drop', handleDrop, false);
-            fileInput.addEventListener('change', handleFileSelect, false);
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles(files);
-            }
-
-            function handleFileSelect(e) {
-                const files = e.target.files;
-                handleFiles(files);
-            }
-        }
-
-        // 处理文件上传
-        async function handleFiles(files) {
-            if (files.length === 0) return;
-
-            const file = files[0];
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const response = await fetch(`${API_BASE}/get-presigned-url`, {
-                    method: 'POST',
-                    body: JSON.stringify({ fileName: file.name }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // 使用预签名URL直接上传到COS
-                    const uploadResponse = await fetch(data.data.uploadUrl, {
-                        method: 'PUT',
-                        body: file,
-                        headers: {
-                            'Content-Type': file.type
-                        }
-                    });
-
-                    if (uploadResponse.ok) {
-                        alert('文件上传成功！');
-                        loadFileList(); // 刷新文件列表
-                    } else {
-                        throw new Error('上传到COS失败');
-                    }
-                } else {
-                    throw new Error(data.message);
-                }
-            } catch (error) {
-                console.error('Upload error:', error);
-                alert('文件上传失败: ' + error.message);
-            }
-        }
-
-        // 加载文件列表
-        async function loadFileList() {
-            try {
-                const response = await fetch(`${API_BASE}/list-files`);
-                const result = await response.json();
-
-                const container = document.getElementById('fileListContainer');
-
-                if (result.success) {
-                    const files = result.data.files;
-
-                    if (files.length === 0) {
-                        container.innerHTML = '<div class="loading">暂无文件</div>';
-                        return;
-                    }
-
-                    let tableHTML = `
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>文件名</th>
-                                    <th>大小</th>
-                                    <th>最后修改时间</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-
-                    files.forEach(file => {
-                        tableHTML += `
-                            <tr>
-                                <td>${file.name}</td>
-                                <td>${formatFileSize(file.size)}</td>
-                                <td>${new Date(file.lastModified).toLocaleString()}</td>
-                                <td>
-                                    <a class="action-btn" href="${API_BASE}/download?fileName=${encodeURIComponent(file.name)}" download>
-                                        <i class="fas fa-download"></i> 下载
-                                    </a>
-                                    <a class="action-btn" href="javascript:void(0)" onclick="deleteFile('${file.name}')">
-                                        <i class="fas fa-trash-alt"></i> 删除
-                                    </a>
-                                </td>
-                            </tr>
-                        `;
-                    });
-
-                    tableHTML += '</tbody></table>';
-                    container.innerHTML = tableHTML;
-                } else {
-                    container.innerHTML = `<div class="error-message">加载失败: ${result.message}</div>`;
-                }
-            } catch (error) {
-                console.error('Error loading file list:', error);
-                document.getElementById('fileListContainer').innerHTML = 
-                    '<div class="error-message">加载文件列表失败，请检查网络连接</div>';
-            }
-        }
-
-        // 删除文件
-        async function deleteFile(fileName) {
-            if (!confirm(`确定要删除文件 "${fileName}" 吗？`)) {
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/delete-file`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ fileName })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    alert('文件删除成功');
-                    loadFileList();
-                } else {
-                    throw new Error(result.message);
-                }
-            } catch (error) {
-                console.error('Delete error:', error);
-                alert('文件删除失败: ' + error.message);
-            }
-        }
-
-        // 格式化文件大小
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

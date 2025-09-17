@@ -1,0 +1,10 @@
+{
+  "name": "dpo-file-manager",
+  "version": "1.0.0",
+  "description": "DPO文件管理系统SCF函数",
+  "main": "index.js",
+  "dependencies": {
+    "cos-nodejs-sdk-v5": "^2.12.4",
+    "multiparty": "^4.2.3"
+  }
+}

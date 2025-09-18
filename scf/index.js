@@ -1,6 +1,6 @@
 const COS = require('cos-nodejs-sdk-v5');
-const multiparty = require('multiparty');
 const path = require('path');
+const querystring = require('querystring');
 
 // COS 配置
 const cos = new COS({
@@ -63,88 +63,59 @@ exports.main_handler = async (event, context) => {
 
 // 处理文件上传
 async function handleUpload(event) {
-    return new Promise((resolve) => {
-        try {
-            const form = new multiparty.Form();
-            const body = event.isBase64Encoded ? 
-                Buffer.from(event.body, 'base64') : 
-                Buffer.from(event.body);
+    try {
+        // 简化的文件上传处理 - 使用 base64 编码
+        const body = event.isBase64Encoded ? 
+            Buffer.from(event.body, 'base64') : 
+            Buffer.from(event.body || '', 'utf8');
 
-            // 模拟解析 multipart 数据
-            form.parse({
-                headers: event.headers,
-                body: body
-            }, async (err, fields, files) => {
+        // 从查询参数或头部获取文件名
+        const fileName = event.queryStringParameters?.filename || 
+                        event.headers?.['x-filename'] || 
+                        `file_${Date.now()}.bin`;
+
+        // 生成文件key
+        const timestamp = Date.now();
+        const ext = path.extname(fileName);
+        const baseName = path.basename(fileName, ext);
+        const fileKey = `uploads/${timestamp}_${baseName}${ext}`;
+
+        // 上传到COS
+        const result = await new Promise((resolve, reject) => {
+            cos.putObject({
+                Bucket: BUCKET,
+                Region: REGION,
+                Key: fileKey,
+                Body: body,
+                ContentLength: body.length
+            }, (err, data) => {
                 if (err) {
-                    return resolve({
-                        statusCode: 400,
-                        headers: corsHeaders,
-                        body: JSON.stringify({ success: false, message: 'Parse error' })
-                    });
-                }
-
-                try {
-                    const file = files.file?.[0];
-                    if (!file) {
-                        return resolve({
-                            statusCode: 400,
-                            headers: corsHeaders,
-                            body: JSON.stringify({ success: false, message: 'No file' })
-                        });
-                    }
-
-                    // 生成文件key
-                    const timestamp = Date.now();
-                    const originalName = file.originalFilename || 'unknown';
-                    const ext = path.extname(originalName);
-                    const baseName = path.basename(originalName, ext);
-                    const fileKey = `uploads/${timestamp}_${baseName}${ext}`;
-
-                    // 上传到COS
-                    cos.putObject({
-                        Bucket: BUCKET,
-                        Region: REGION,
-                        Key: fileKey,
-                        Body: require('fs').createReadStream(file.path),
-                        ContentLength: file.size
-                    }, (err, data) => {
-                        if (err) {
-                            console.error('COS upload error:', err);
-                            resolve({
-                                statusCode: 500,
-                                headers: corsHeaders,
-                                body: JSON.stringify({ success: false, message: 'Upload failed' })
-                            });
-                        } else {
-                            resolve({
-                                statusCode: 200,
-                                headers: corsHeaders,
-                                body: JSON.stringify({
-                                    success: true,
-                                    message: 'Upload success',
-                                    data: { key: fileKey, name: originalName }
-                                })
-                            });
-                        }
-                    });
-
-                } catch (error) {
-                    resolve({
-                        statusCode: 500,
-                        headers: corsHeaders,
-                        body: JSON.stringify({ success: false, message: error.message })
-                    });
+                    console.error('COS upload error:', err);
+                    reject(err);
+                } else {
+                    resolve(data);
                 }
             });
+        });
 
-        } catch (error) {
-            resolve({
-                statusCode: 500,
-                headers: corsHeaders,
-                body: JSON.stringify({ success: false, message: error.message })
-            });
-        }
-    });
+        return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: JSON.stringify({
+                success: true,
+                message: 'Upload success',
+                data: { key: fileKey, name: fileName }
+            })
+        };
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        return {
+            statusCode: 500,
+            headers: corsHeaders,
+            body: JSON.stringify({ success: false, message: error.message })
+        };
+    }
 }
 
 // 处理文件列表

@@ -3,11 +3,8 @@
 # 设置npm镜像源（加速安装）
 export npm_config_registry=https://registry.npmmirror.com
 
-# 检查并安装依赖
-if [ ! -d "node_modules" ] || [ ! -d "node_modules/cos-nodejs-sdk-v5" ]; then
-    echo "Installing dependencies..."
-    /var/lang/node18/bin/npm install cos-nodejs-sdk-v5@^2.12.4 multiparty@^4.2.3
-fi
+# 安装依赖
+/var/lang/node18/bin/npm install --production
 
-# 启动函数
-/var/lang/node18/bin/node index.js
+# 启动SCF运行时
+exec "$@"
